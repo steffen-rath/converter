@@ -21,14 +21,14 @@ public class ConverterHierarchyTest {
         BaseFromClass from = new BaseFromClass();
         from.setFromString(FROM_STRING);
         BaseToClass to = new BaseConverter<BaseFromClass, BaseToClass>()
-                .convert(from);
+                .apply(from);
         assertEquals(FROM_STRING, to.getToString());
     }
 
     @Test
     public void baseConverterIsNullSafe() {
         BaseToClass output = new BaseConverter<BaseFromClass, BaseToClass>()
-                .convert(null);
+                .apply(null);
         assertNull(output);
     }
 
@@ -40,8 +40,7 @@ public class ConverterHierarchyTest {
         secondFrom.setFromString(ANOTHER_FROM_STRING);
         List<BaseFromClass> froms = Arrays.asList(firstFrom, secondFrom);
         List<BaseToClass> tos = froms.stream()
-                .map(new ListConverter<>(
-                        new BaseConverter<BaseFromClass, BaseToClass>()))
+                .map(new BaseConverter<BaseFromClass, BaseToClass>())
                 .collect(Collectors.toList());
         assertEquals(FROM_STRING, tos.get(0).getToString());
         assertEquals(ANOTHER_FROM_STRING, tos.get(1).getToString());
@@ -53,7 +52,7 @@ public class ConverterHierarchyTest {
         from.setFromString(FROM_STRING);
         from.setAnotherFromString(ANOTHER_FROM_STRING);
         ExtendingToClass to = new ExtendingConverter<ExtendingFromClass, ExtendingToClass>()
-                .convert(from);
+                .apply(from);
         assertEquals(FROM_STRING, to.getToString());
         assertEquals(ANOTHER_FROM_STRING, to.getAnotherToString());
     }
@@ -61,7 +60,7 @@ public class ConverterHierarchyTest {
     @Test
     public void extendingConverterIsNullSafe() {
         ExtendingToClass to = new ExtendingConverter<ExtendingFromClass, ExtendingToClass>()
-                .convert(null);
+                .apply(null);
         assertNull(to);
     }
 
@@ -75,8 +74,7 @@ public class ConverterHierarchyTest {
         secondFrom.setAnotherFromString(FINAL_FROM_STRING);
         List<ExtendingFromClass> froms = Arrays.asList(firstFrom, secondFrom);
         List<ExtendingToClass> tos = froms.stream()
-                .map(new ListConverter<>(
-                        new ExtendingConverter<ExtendingFromClass, ExtendingToClass>()))
+                .map(new ExtendingConverter<ExtendingFromClass, ExtendingToClass>())
                 .collect(Collectors.toList());
         assertEquals(FROM_STRING, tos.get(0).getToString());
         assertEquals(ANOTHER_FROM_STRING, tos.get(0).getAnotherToString());
