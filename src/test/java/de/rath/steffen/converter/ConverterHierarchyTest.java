@@ -2,7 +2,9 @@ package de.rath.steffen.converter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,23 +85,41 @@ public class ConverterHierarchyTest {
     }
 
     @Test
-    public void baseClassCanBeConvertedUsingConverterFactory() {
+    public void baseClassCanBeConvertedUsingConverterFacade() {
         BaseFromClass from = new BaseFromClass();
         from.setFromString(FROM_STRING);
-        BaseToClass to = new ConverterFactory().getConverter(from).apply(from);
+        BaseToClass to = new ConverterFacade().convert(from);
 
         assertEquals(FROM_STRING, to.getToString());
     }
 
     @Test
-    public void extendingClassCanBeConvertedUsingConverterFactory() {
-        ExtendingFromClass from = new ExtendingFromClass();
+    public void extendingClassCanBeConvertedUsingConverterFacade() {
+        BaseFromClass from = new ExtendingFromClass();
         from.setFromString(FROM_STRING);
-        from.setAnotherFromString(ANOTHER_FROM_STRING);
-        ExtendingToClass to = new ConverterFactory().getConverter(from)
-                .apply(from);
+        ((ExtendingFromClass) from).setAnotherFromString(ANOTHER_FROM_STRING);
+        ExtendingToClass to = (ExtendingToClass) new ConverterFacade()
+                .convert(from);
         assertEquals(FROM_STRING, to.getToString());
         assertEquals(ANOTHER_FROM_STRING, to.getAnotherToString());
+    }
+
+    @Test
+    public void listsCanBeConverted() {
+        List<BaseFromClass> input = new ArrayList<>();
+        BaseFromClass firstFrom = new BaseFromClass();
+        firstFrom.setFromString(FROM_STRING);
+        ExtendingFromClass secondFrom = new ExtendingFromClass();
+        secondFrom.setFromString(YET_ANOTHER_FROM_STRING);
+        secondFrom.setAnotherFromString(FINAL_FROM_STRING);
+        input.add(firstFrom);
+        input.add(secondFrom);
+
+        List<BaseToClass> output = new ArrayList<>();
+        new ConverterFacade().convertBaseFromClassList(input, output);
+
+        assertTrue(output.get(0) instanceof BaseToClass);
+        assertTrue(output.get(1) instanceof ExtendingToClass);
     }
 
 }
