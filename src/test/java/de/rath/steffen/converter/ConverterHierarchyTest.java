@@ -81,4 +81,5 @@ public class ConverterHierarchyTest {
         assertEquals(YET_ANOTHER_FROM_STRING, tos.get(1).getToString());
         assertEquals(FINAL_FROM_STRING, tos.get(1).getAnotherToString());
     }
+
 }
