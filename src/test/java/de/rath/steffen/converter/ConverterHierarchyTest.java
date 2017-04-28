@@ -82,4 +82,24 @@ public class ConverterHierarchyTest {
         assertEquals(FINAL_FROM_STRING, tos.get(1).getAnotherToString());
     }
 
+    @Test
+    public void baseClassCanBeConvertedUsingConverterFactory() {
+        BaseFromClass from = new BaseFromClass();
+        from.setFromString(FROM_STRING);
+        BaseToClass to = new ConverterFactory().getConverter(from).apply(from);
+
+        assertEquals(FROM_STRING, to.getToString());
+    }
+
+    @Test
+    public void extendingClassCanBeConvertedUsingConverterFactory() {
+        ExtendingFromClass from = new ExtendingFromClass();
+        from.setFromString(FROM_STRING);
+        from.setAnotherFromString(ANOTHER_FROM_STRING);
+        ExtendingToClass to = new ConverterFactory().getConverter(from)
+                .apply(from);
+        assertEquals(FROM_STRING, to.getToString());
+        assertEquals(ANOTHER_FROM_STRING, to.getAnotherToString());
+    }
+
 }
